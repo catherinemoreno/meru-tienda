@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { getProducts } from "@/lib/repository";
+import { getProducts, getCategories } from "@/lib/repository";
 import ProductGrid from "@/components/product/ProductGrid";
 import StoreFilters from "@/components/product/StoreFilters";
 import { CategorySlug, ProductTag } from "@/types";
@@ -28,6 +28,7 @@ export default async function TiendaPage({
   const filtro = params.filtro as ProductTag | undefined;
 
   let products = await getProducts({ category, sort });
+  const categories = await getCategories();
   if (filtro) {
     products = products.filter((p) => p.tags.includes(filtro));
   }
@@ -55,7 +56,7 @@ export default async function TiendaPage({
 
       <div className="mx-auto max-w-7xl px-6 py-8">
         <Suspense>
-          <StoreFilters />
+          <StoreFilters categories={categories} />
         </Suspense>
         <div className="mt-8">
           <ProductGrid products={products} />
