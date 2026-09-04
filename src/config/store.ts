@@ -49,7 +49,7 @@ export const storeConfig = {
     subtitle:
       "Productos curados de hogar, tecnología, moda y los hallazgos más virales del momento, con pago contra entrega en toda Colombia.",
     ctaPrimary: { label: "Explorar tienda", href: "/tienda" },
-    ctaSecondary: { label: "Ver Hallazgos", href: "/categoria/hallazgos" },
+    ctaSecondary: { label: "Ver ofertas", href: "/tienda?filtro=oferta" },
     image:
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
   },
