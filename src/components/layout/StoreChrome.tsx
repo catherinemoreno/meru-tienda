@@ -7,13 +7,16 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { StoreSettings } from "@/lib/data/settingsStore";
+import { Category } from "@/types";
 
 export default function StoreChrome({
   children,
   settings,
+  categories,
 }: {
   children: React.ReactNode;
   settings: StoreSettings;
+  categories: Category[];
 }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
@@ -40,9 +43,9 @@ export default function StoreChrome({
   return (
     <>
       <TopBanner />
-      <Header />
+      <Header categories={categories} />
       <main className="flex-1">{children}</main>
-      <Footer settings={settings} />
+      <Footer settings={settings} categories={categories} />
       <WhatsAppButton whatsappNumber={settings.whatsappNumber} />
     </>
   );
