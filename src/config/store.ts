@@ -47,7 +47,7 @@ export const storeConfig = {
     eyebrow: "Nueva colección",
     title: "Encuentra lo que no sabías que necesitabas",
     subtitle:
-      "Productos curados de hogar, tecnología, moda y los hallazgos más virales del momento, con pago contra entrega en toda Colombia.",
+      "Los mejores productos de hogar, tecnología, moda y ofertas del momento, con pago contra entrega en toda Colombia.",
     ctaPrimary: { label: "Explorar tienda", href: "/tienda" },
     ctaSecondary: { label: "Ver ofertas", href: "/tienda?filtro=oferta" },
     image:
