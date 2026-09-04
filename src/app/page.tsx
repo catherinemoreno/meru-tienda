@@ -10,24 +10,26 @@ import {
   getOffers,
   getHallazgos,
   getFeaturedProducts,
+  getCategories,
 } from "@/lib/repository";
 
 export const revalidate = 60;
 
 export default async function Home() {
-  const [newProducts, bestSellers, offers, hallazgos, featured] = await Promise.all([
+  const [newProducts, bestSellers, offers, hallazgos, featured, categories] = await Promise.all([
     getNewProducts(8),
     getBestSellers(8),
     getOffers(8),
     getHallazgos(8),
     getFeaturedProducts(1),
+    getCategories(),
   ]);
 
   return (
     <>
       <Hero featured={featured[0]} />
 
-      <CategoryShowcase />
+      <CategoryShowcase categories={categories} />
 
       <section className="mx-auto max-w-7xl px-6 py-16">
         <SectionHeader eyebrow="Recién llegados" title="Novedades" href="/tienda?filtro=nuevo" />
