@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, Search, Heart, ShoppingBag, X, ChevronDown, ChevronRight } from "lucide-react";
 import { storeConfig } from "@/config/store";
-import { categories } from "@/lib/data/categories";
+import { Category } from "@/types";
 import { useCartStore } from "@/lib/store/cart";
 import { cn } from "@/lib/utils";
 import CartDrawer from "@/components/layout/CartDrawer";
@@ -17,7 +17,7 @@ const navLinks = [
   { label: "Ofertas", href: "/tienda?filtro=oferta" },
 ];
 
-export default function Header() {
+export default function Header({ categories }: { categories: Category[] }) {
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
