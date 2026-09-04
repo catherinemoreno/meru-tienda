@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { categories } from "@/lib/data/categories";
+import { Category } from "@/types";
 import SectionHeader from "@/components/ui/SectionHeader";
 
-export default function CategoryShowcase() {
+export default function CategoryShowcase({ categories }: { categories: Category[] }) {
   const mainCategories = categories.filter((c) => c.slug !== "hallazgos");
   return (
     <section className="mx-auto max-w-7xl px-6 py-16">
