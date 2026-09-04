@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { AtSign, Globe, Music2, Phone } from "lucide-react";
 import { storeConfig } from "@/config/store";
-import { categories } from "@/lib/data/categories";
+import { Category } from "@/types";
 import { StoreSettings } from "@/lib/data/settingsStore";
 
-export default function Footer({ settings }: { settings: StoreSettings }) {
+export default function Footer({
+  settings,
+  categories,
+}: {
+  settings: StoreSettings;
+  categories: Category[];
+}) {
   return (
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-6 py-14 sm:grid-cols-2 md:grid-cols-4">
