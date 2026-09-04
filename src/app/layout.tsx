@@ -3,6 +3,7 @@ import "./globals.css";
 import { storeConfig } from "@/config/store";
 import StoreChrome from "@/components/layout/StoreChrome";
 import { getStoreSettings } from "@/lib/data/settingsStore";
+import { getCategories } from "@/lib/repository";
 
 // Nota: next/font/google requiere acceso a fonts.googleapis.com en tiempo de
 // build, bloqueado en este entorno. Se usan pilas de fuentes del sistema que
@@ -28,11 +29,13 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getStoreSettings();
+  const [settings, categories] = await Promise.all([getStoreSettings(), getCategories()]);
   return (
     <html lang="es" className="h-full antialiased">
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <StoreChrome settings={settings}>{children}</StoreChrome>
+        <StoreChrome settings={settings} categories={categories}>
+          {children}
+        </StoreChrome>
       </body>
     </html>
   );
