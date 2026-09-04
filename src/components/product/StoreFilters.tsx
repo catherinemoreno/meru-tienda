@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { categories } from "@/lib/data/categories";
-import { CategorySlug } from "@/types";
+import { CategorySlug, Category } from "@/types";
 
 const filterLabels: Record<string, string> = {
   nuevo: "Novedades",
@@ -10,7 +9,13 @@ const filterLabels: Record<string, string> = {
   oferta: "Ofertas",
 };
 
-export default function StoreFilters({ hideCategory }: { hideCategory?: CategorySlug }) {
+export default function StoreFilters({
+  hideCategory,
+  categories,
+}: {
+  hideCategory?: CategorySlug;
+  categories: Category[];
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
