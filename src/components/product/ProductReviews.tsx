@@ -1,18 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Star, ImagePlus } from "lucide-react";
 import { Review } from "@/types";
 
-export default function ProductReviews({
-  productId,
-  reviews,
-}: {
-  productId: string;
-  reviews: Review[];
-}) {
-  const [list, setList] = useState(reviews);
+export default function ProductReviews({ productId }: { productId: string }) {
+  const [list, setList] = useState<Review[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [name, setName] = useState("");
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -21,6 +16,24 @@ export default function ProductReviews({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/reviews?productId=" + productId)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (active) {
+          setList(data);
+          setLoaded(true);
+        }
+      })
+      .catch(() => {
+        if (active) setLoaded(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [productId]);
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -109,7 +122,9 @@ export default function ProductReviews({
 
       <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-3">
         <div className="flex flex-col gap-5 lg:col-span-2">
-          {list.length === 0 ? (
+          {!loaded ? (
+            <p className="text-sm text-muted">Cargando reseñas...</p>
+          ) : list.length === 0 ? (
             <p className="text-sm text-muted">Todavía no hay reseñas para este producto. Sé el primero en dejar la tuya.</p>
           ) : (
             list.map((r) => (
