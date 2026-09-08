@@ -13,13 +13,16 @@ function formatDate(iso: string | null) {
   });
 }
 
-// Deja el celular en formato E.164 sin '+' para el link de WhatsApp
-// (wa.me/<numero>). Si ya viene con indicativo lo respeta; si no, asume
-// Colombia (57).
 function whatsappNumber(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   if (digits.startsWith("57") && digits.length > 10) return digits;
-  return `57${digits}`;
+  return "57" + digits;
+}
+
+function whatsappLink(phone: string): string {
+  const base = "https://wa.me/" + whatsappNumber(phone);
+  const message = "Hola! Vimos que dejaste unos productos en tu carrito en Meru, te ayudamos a completar tu pedido?";
+  return base + "?text=" + encodeURIComponent(message);
 }
 
 export default async function CarritosAbandonadosPage() {
@@ -35,7 +38,7 @@ export default async function CarritosAbandonadosPage() {
 
       {carts.length === 0 ? (
         <p className="mt-8 rounded-2xl border border-dashed border-border p-8 text-center text-muted">
-          Todavía no hay carritos abandonados registrados.
+          Todavia no hay carritos abandonados registrados.
         </p>
       ) : (
         <div className="mt-8 flex flex-col gap-4">
@@ -46,7 +49,7 @@ export default async function CarritosAbandonadosPage() {
             >
               <div>
                 <p className="font-semibold">
-                  {cart.fullName ?? "Sin nombre (no alcanzó a escribirlo)"}
+                  {cart.fullName ?? "Sin nombre (no alcanzo a escribirlo)"}
                 </p>
                 <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
                   {cart.phone && (
@@ -65,14 +68,12 @@ export default async function CarritosAbandonadosPage() {
                   <span className="text-muted">Productos: </span>
                   {cart.products.join(", ")}
                 </p>
-                <p className="mt-1 text-xs text-muted">Última actividad: {formatDate(cart.lastActivity)}</p>
+                <p className="mt-1 text-xs text-muted">Ultima actividad: {formatDate(cart.lastActivity)}</p>
               </div>
 
               {cart.phone && (
                 
-                  href={"https://wa.me/" + whatsappNumber(cart.phone) + "?text=" + encodeURIComponent(
-                    "¡Hola! Vimos que dejaste unos productos en tu carrito en Meru, ¿te ayudamos a completar tu pedido? 🙂"
-                  )}
+                  href={whatsappLink(cart.phone)}
                   target="_blank"
                   rel="noreferrer"
                   className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white"
