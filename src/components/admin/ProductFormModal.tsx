@@ -6,6 +6,57 @@ import { Product, ProductTag, Category, ProductVariant } from "@/types";
 
 const allTags: ProductTag[] = ["nuevo", "masVendido", "oferta"];
 
+// Comprime y redimensiona la foto en el navegador antes de subirla, para que
+// las fotos de celular (a veces 5-8MB en resolucion muy alta) no hagan lenta
+// la tienda. Si algo falla, sube la foto original tal cual (no bloquea).
+function resizeImage(file: File, maxDimension = 1600, quality = 0.82): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
+        }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        URL.revokeObjectURL(url);
+        resolve(file);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(url);
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          const newName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+          resolve(new File([blob], newName, { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
+    img.src = url;
+  });
+}
+
 export default function ProductFormModal({
   product,
   categories,
@@ -60,8 +111,9 @@ export default function ProductFormModal({
       list.map(async (file, idx) => {
         const tempId = tempIds[idx];
         try {
+          const resized = await resizeImage(file);
           const body = new FormData();
-          body.append("file", file);
+          body.append("file", resized);
           const res = await fetch("/api/admin/upload", { method: "POST", body });
           const data = await res.json();
           if (!res.ok) {
