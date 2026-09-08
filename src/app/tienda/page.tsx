@@ -12,6 +12,14 @@ export const metadata: Metadata = {
   description: "Explora todo el catálogo de Meru: hogar, moda, tecnología, decoración y más.",
 };
 
+function parsePrecioRange(precio: string | undefined): { minPrice?: number; maxPrice?: number } {
+  if (!precio) return {};
+  const parts = precio.split("-");
+  const min = parts[0] ? Number(parts[0]) : undefined;
+  const max = parts[1] ? Number(parts[1]) : undefined;
+  return { minPrice: min, maxPrice: max };
+}
+
 export default async function TiendaPage({
   searchParams,
 }: {
@@ -26,11 +34,26 @@ export default async function TiendaPage({
     | "nuevo"
     | undefined;
   const filtro = params.filtro as ProductTag | undefined;
+  const query = params.q?.trim().toLowerCase();
+  const soloDisponibles = params.disponible === "1";
+  const { minPrice, maxPrice } = parsePrecioRange(params.precio);
 
-  let products = await getProducts({ category, sort });
+  let products = await getProducts({ category, sort, minPrice, maxPrice });
   const categories = await getCategories();
+
   if (filtro) {
     products = products.filter((p) => p.tags.includes(filtro));
+  }
+  if (query) {
+    products = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(query) ||
+        p.description.toLowerCase().includes(query) ||
+        p.subcategory.toLowerCase().includes(query)
+    );
+  }
+  if (soloDisponibles) {
+    products = products.filter((p) => p.stock > 0);
   }
 
   return (
