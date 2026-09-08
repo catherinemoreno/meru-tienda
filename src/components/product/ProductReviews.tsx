@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Star } from "lucide-react";
+import Image from "next/image";
+import { Star, ImagePlus } from "lucide-react";
 import { Review } from "@/types";
 
 export default function ProductReviews({
@@ -15,9 +16,18 @@ export default function ProductReviews({
   const [name, setName] = useState("");
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,24 +38,48 @@ export default function ProductReviews({
     }
     setSubmitting(true);
     try {
+      let photoUrl = "";
+      if (photoFile) {
+        const uploadData = new FormData();
+        uploadData.append("file", photoFile);
+        const uploadRes = await fetch("/api/reviews/upload", {
+          method: "POST",
+          body: uploadData,
+        });
+        if (uploadRes.ok) {
+          const uploadJson = await uploadRes.json();
+          photoUrl = uploadJson.url;
+        }
+      }
+
       const res = await fetch("/api/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: productId, customerName: name, rating: rating, comment: comment }),
+        body: JSON.stringify({
+          productId: productId,
+          customerName: name,
+          rating: rating,
+          comment: comment,
+          photoUrl: photoUrl,
+        }),
       });
       if (!res.ok) throw new Error("fallo");
+
       const newReview: Review = {
         id: "temp-" + Date.now(),
         productId: productId,
         customerName: name,
         rating: rating,
         comment: comment || null,
+        photoUrl: photoUrl || null,
         createdAt: new Date().toISOString(),
       };
       setList([newReview].concat(list));
       setName("");
       setRating(0);
       setComment("");
+      setPhotoFile(null);
+      setPhotoPreview(null);
       setSuccess(true);
     } catch {
       setError("No pudimos guardar tu reseña, intenta de nuevo");
@@ -89,6 +123,11 @@ export default function ProductReviews({
                   </div>
                 </div>
                 {r.comment && <p className="mt-2 text-sm text-muted">{r.comment}</p>}
+                {r.photoUrl && (
+                  <div className="relative mt-3 h-32 w-32 overflow-hidden rounded-xl bg-surface-2">
+                    <Image src={r.photoUrl} alt={"Foto de " + r.customerName} fill className="object-cover" />
+                  </div>
+                )}
               </div>
             ))
           )}
@@ -119,6 +158,18 @@ export default function ProductReviews({
             rows={3}
             className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent"
           />
+
+          <label className="mt-3 flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted hover:border-accent/50">
+            <ImagePlus className="h-4 w-4" />
+            {photoFile ? photoFile.name : "Agregar una foto (opcional)"}
+            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} className="hidden" />
+          </label>
+
+          {photoPreview && (
+            <div className="relative mt-3 h-24 w-24 overflow-hidden rounded-xl bg-surface-2">
+              <Image src={photoPreview} alt="Vista previa" fill className="object-cover" />
+            </div>
+          )}
 
           {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
           {success && <p className="mt-2 text-xs text-accent">¡Gracias por tu reseña!</p>}
