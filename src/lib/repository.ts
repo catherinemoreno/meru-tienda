@@ -245,3 +245,82 @@ export async function getNewProducts(limit = 8): Promise<Product[]> {
     return (data as ProductRow[]).map(rowToProduct);
   }
   return delay(mockProducts.filter((p) => p.active && p.tags.includes("nuevo")).slice(0, limit));
+}
+
+export async function getBestSellers(limit = 8): Promise<Product[]> {
+  if (isSupabaseConfigured()) {
+    const { data, error } = await supabase!
+      .from("products")
+      .select(PRODUCT_SELECT)
+      .eq("active", true)
+      .eq("is_bestseller", true)
+      .limit(limit);
+    if (error) throw error;
+    return (data as ProductRow[]).map(rowToProduct);
+  }
+  return delay(
+    mockProducts.filter((p) => p.active && p.tags.includes("masVendido")).slice(0, limit)
+  );
+}
+
+export async function getOffers(limit = 8): Promise<Product[]> {
+  if (isSupabaseConfigured()) {
+    const { data, error } = await supabase!
+      .from("products")
+      .select(PRODUCT_SELECT)
+      .eq("active", true)
+      .eq("is_offer", true)
+      .limit(limit);
+    if (error) throw error;
+    return (data as ProductRow[]).map(rowToProduct);
+  }
+  return delay(mockProducts.filter((p) => p.active && p.tags.includes("oferta")).slice(0, limit));
+}
+
+export async function getHallazgos(limit = 8): Promise<Product[]> {
+  if (isSupabaseConfigured()) {
+    const { data, error } = await supabase!
+      .from("products")
+      .select(PRODUCT_SELECT)
+      .eq("active", true)
+      .eq("category_slug", "hallazgos")
+      .limit(limit);
+    if (error) throw error;
+    return (data as ProductRow[]).map(rowToProduct);
+  }
+  return delay(
+    mockProducts.filter((p) => p.active && p.category === "hallazgos").slice(0, limit)
+  );
+}
+
+export async function getRelatedProducts(product: Product, limit = 4): Promise<Product[]> {
+  if (isSupabaseConfigured()) {
+    const { data, error } = await supabase!
+      .from("products")
+      .select(PRODUCT_SELECT)
+      .eq("active", true)
+      .eq("category_slug", product.category)
+      .neq("id", product.id)
+      .limit(limit);
+    if (error) throw error;
+    return (data as ProductRow[]).map(rowToProduct);
+  }
+  return delay(
+    mockProducts
+      .filter((p) => p.active && p.category === product.category && p.id !== product.id)
+      .slice(0, limit)
+  );
+}
+
+export async function getProductReviews(productId: string): Promise<Review[]> {
+  if (isSupabaseConfigured()) {
+    const { data, error } = await supabase!
+      .from("product_reviews")
+      .select("id, product_id, customer_name, rating, comment, created_at")
+      .eq("product_id", productId)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return (data as ReviewRow[]).map(rowToReview);
+  }
+  return delay([]);
+}
