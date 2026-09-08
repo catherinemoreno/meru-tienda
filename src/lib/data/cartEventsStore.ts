@@ -1,6 +1,6 @@
 // Registro de "agregar al carrito" para poder calcular carritos abandonados:
-// una sesión de navegador que agregó productos al carrito pero nunca terminó
-// un pedido (orders.session_id no coincide con ningún cart_events.session_id).
+// una sesion de navegador que agrego productos al carrito pero nunca termino
+// un pedido (orders.session_id no coincide con ningun cart_events.session_id).
 import { isSupabaseAdminConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export async function logCartEvent(
@@ -17,11 +17,6 @@ export async function logCartEvent(
   });
 }
 
-// Guarda (o actualiza) los datos de contacto que la persona alcanzó a
-// escribir en el checkout, aunque nunca haya terminado el pedido. Se llama
-// desde el checkout cada vez que sale de un campo (onBlur), así que se va
-// completando poco a poco. Es "best effort": si falla, no rompe el
-// checkout.
 export async function saveCheckoutContact(
   sessionId: string,
   contact: { fullName?: string; phone?: string; email?: string }
@@ -50,10 +45,6 @@ export type AbandonedCart = {
   lastActivity: string | null;
 };
 
-// Lista completa de carritos abandonados: sesiones que agregaron productos
-// pero nunca completaron un pedido, con los datos de contacto que hayan
-// alcanzado a escribir (si los escribieron) y los productos que dejaron en
-// el carrito.
 export async function getAbandonedCarts(): Promise<AbandonedCart[]> {
   if (!isSupabaseAdminConfigured()) return [];
   const db = getSupabaseAdmin();
@@ -81,11 +72,11 @@ export async function getAbandonedCarts(): Promise<AbandonedCart[]> {
     ])
   );
 
-  const bySession = new Map
-    string,
-    { products: Set<string>; lastActivity: string }
-  >();
-  for (const row of cartRows as { session_id: string; product_name: string; created_at: string }[]) {
+  type CartRow = { session_id: string; product_name: string; created_at: string };
+  type SessionInfo = { products: Set<string>; lastActivity: string };
+  const bySession: Map<string, SessionInfo> = new Map();
+
+  for (const row of cartRows as CartRow[]) {
     if (purchasedSessions.has(row.session_id)) continue;
     const existing = bySession.get(row.session_id);
     if (existing) {
