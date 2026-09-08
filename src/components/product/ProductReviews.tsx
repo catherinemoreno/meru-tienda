@@ -23,7 +23,7 @@ export default function ProductReviews({
     e.preventDefault();
     setError(null);
     if (!name.trim() || rating < 1) {
-      setError("Escribe tu nombre y elige una calificacion");
+      setError("Escribe tu nombre y elige una calificación");
       return;
     }
     setSubmitting(true);
@@ -48,7 +48,7 @@ export default function ProductReviews({
       setComment("");
       setSuccess(true);
     } catch {
-      setError("No pudimos guardar tu resena, intenta de nuevo");
+      setError("No pudimos guardar tu reseña, intenta de nuevo");
     } finally {
       setSubmitting(false);
     }
@@ -59,7 +59,7 @@ export default function ProductReviews({
 
   return (
     <section className="mx-auto max-w-7xl px-6 pb-16">
-      <h2 className="font-display text-2xl font-semibold sm:text-3xl">Resenas de clientes</h2>
+      <h2 className="font-display text-2xl font-semibold sm:text-3xl">Reseñas de clientes</h2>
 
       {list.length > 0 && (
         <div className="mt-3 flex items-center gap-2 text-sm text-muted">
@@ -69,14 +69,14 @@ export default function ProductReviews({
             ))}
           </div>
           <span className="font-semibold text-foreground">{average.toFixed(1)}</span>
-          <span>({list.length} {list.length === 1 ? "resena" : "resenas"})</span>
+          <span>({list.length} {list.length === 1 ? "reseña" : "reseñas"})</span>
         </div>
       )}
 
       <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-3">
         <div className="flex flex-col gap-5 lg:col-span-2">
           {list.length === 0 ? (
-            <p className="text-sm text-muted">Todavia no hay resenas para este producto. Se el primero en dejar la tuya.</p>
+            <p className="text-sm text-muted">Todavía no hay reseñas para este producto. Sé el primero en dejar la tuya.</p>
           ) : (
             list.map((r) => (
               <div key={r.id} className="rounded-2xl border border-border bg-surface p-4">
@@ -95,7 +95,7 @@ export default function ProductReviews({
         </div>
 
         <form onSubmit={handleSubmit} className="h-fit rounded-2xl border border-border bg-surface p-5">
-          <p className="text-sm font-semibold">Deja tu resena</p>
+          <p className="text-sm font-semibold">Deja tu reseña</p>
 
           <div className="mt-3 flex items-center gap-1">
             {stars.map((i) => (
@@ -115,20 +115,20 @@ export default function ProductReviews({
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Cuentanos que te parecio (opcional)"
+            placeholder="Cuéntanos qué te pareció (opcional)"
             rows={3}
             className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent"
           />
 
           {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
-          {success && <p className="mt-2 text-xs text-accent">Gracias por tu resena!</p>}
+          {success && <p className="mt-2 text-xs text-accent">¡Gracias por tu reseña!</p>}
 
           <button
             type="submit"
             disabled={submitting}
             className="mt-3 w-full rounded-full bg-accent py-2.5 text-sm font-semibold text-[#1a1408] disabled:opacity-60"
           >
-            {submitting ? "Enviando..." : "Enviar resena"}
+            {submitting ? "Enviando..." : "Enviar reseña"}
           </button>
         </form>
       </div>
