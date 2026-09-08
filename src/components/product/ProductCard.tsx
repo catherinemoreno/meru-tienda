@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 import { Product } from "@/types";
 import { cn, discountPercent, formatPrice } from "@/lib/utils";
@@ -15,6 +16,7 @@ const tagLabels: Record<string, string> = {
 };
 
 export default function ProductCard({ product }: { product: Product }) {
+  const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.openCart);
   const isFavorite = useFavoritesStore((s) => s.isFavorite(product.id));
@@ -22,9 +24,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const discount = discountPercent(product.price, product.previousPrice);
   const isHallazgo = product.category === "hallazgos";
 
-  function handleAdd(e: React.MouseEvent) {
-    e.preventDefault();
-    addItem({
+  function buildCartItem() {
+    return {
       productId: product.id,
       slug: product.slug,
       name: product.name,
@@ -33,8 +34,19 @@ export default function ProductCard({ product }: { product: Product }) {
       previousPrice: product.previousPrice,
       quantity: 1,
       stock: product.stock,
-    });
+    };
+  }
+
+  function handleAdd(e: React.MouseEvent) {
+    e.preventDefault();
+    addItem(buildCartItem());
     openCart();
+  }
+
+  function handleBuyNow(e: React.MouseEvent) {
+    e.preventDefault();
+    addItem(buildCartItem());
+    router.push("/checkout");
   }
 
   return (
@@ -128,6 +140,10 @@ export default function ProductCard({ product }: { product: Product }) {
             </span>
           )}
         </div>
+
+        <button onClick={handleBuyNow} className="mt-2 w-full rounded-full bg-accent py-2 text-xs font-semibold text-[#1a1408] transition-transform hover:scale-[1.02] active:scale-95">
+          Comprar ahora
+        </button>
       </div>
     </Link>
   );
