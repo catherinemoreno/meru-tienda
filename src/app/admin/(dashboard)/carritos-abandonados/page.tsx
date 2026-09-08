@@ -43,10 +43,7 @@ export default async function CarritosAbandonadosPage() {
       ) : (
         <div className="mt-8 flex flex-col gap-4">
           {carts.map((cart) => (
-            <div
-              key={cart.sessionId}
-              className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between"
-            >
+            <div key={cart.sessionId} className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-semibold">
                   {cart.fullName ?? "Sin nombre (no alcanzo a escribirlo)"}
@@ -72,12 +69,7 @@ export default async function CarritosAbandonadosPage() {
               </div>
 
               {cart.phone && (
-                
-                  href={whatsappLink(cart.phone)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white"
-                >
+                <a href={whatsappLink(cart.phone)} target="_blank" rel="noreferrer" className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white">
                   <MessageCircle className="h-4 w-4" /> Escribir por WhatsApp
                 </a>
               )}
