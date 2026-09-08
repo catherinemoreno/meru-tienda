@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { Search } from "lucide-react";
 import { CategorySlug, Category } from "@/types";
 
 const filterLabels: Record<string, string> = {
@@ -19,6 +21,7 @@ export default function StoreFilters({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [searchText, setSearchText] = useState(searchParams.get("q") ?? "");
 
   function setParam(key: string, value: string | null) {
     const params = new URLSearchParams(searchParams.toString());
@@ -27,12 +30,34 @@ export default function StoreFilters({
     router.push(`${pathname}?${params.toString()}`);
   }
 
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setParam("q", searchText.trim() || null);
+  }
+
   const activeCategory = searchParams.get("categoria");
   const activeFilter = searchParams.get("filtro");
   const activeSort = searchParams.get("orden") ?? "relevancia";
+  const activePrecio = searchParams.get("precio") ?? "";
+  const soloDisponibles = searchParams.get("disponible") === "1";
 
   return (
     <div className="mb-6 flex flex-col gap-4">
+      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+          <input
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="¿Qué estás buscando?"
+            className="w-full rounded-full border border-border bg-surface py-2.5 pl-10 pr-4 text-sm outline-none focus:border-accent"
+          />
+        </div>
+        <button type="submit" className="rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-[#1a1408]">
+          Buscar
+        </button>
+      </form>
+
       <div className="flex flex-wrap gap-2">
         {["nuevo", "masVendido", "oferta"].map((f) => (
           <button
@@ -47,6 +72,16 @@ export default function StoreFilters({
             {filterLabels[f]}
           </button>
         ))}
+        <button
+          onClick={() => setParam("disponible", soloDisponibles ? null : "1")}
+          className={`rounded-full border px-4 py-2 text-xs font-medium transition-colors ${
+            soloDisponibles
+              ? "border-accent bg-accent text-[#1a1408]"
+              : "border-border text-muted hover:border-accent/50"
+          }`}
+        >
+          Disponibilidad
+        </button>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -64,6 +99,19 @@ export default function StoreFilters({
             ))}
           </select>
         )}
+
+        <select
+          value={activePrecio}
+          onChange={(e) => setParam("precio", e.target.value || null)}
+          className="rounded-full border border-border bg-surface px-4 py-2 text-xs text-foreground"
+        >
+          <option value="">Cualquier precio</option>
+          <option value="0-50000">Hasta $50.000</option>
+          <option value="50000-100000">$50.000 - $100.000</option>
+          <option value="100000-200000">$100.000 - $200.000</option>
+          <option value="200000-500000">$200.000 - $500.000</option>
+          <option value="500000-">Más de $500.000</option>
+        </select>
 
         <select
           value={activeSort}
