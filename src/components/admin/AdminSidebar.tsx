@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, ShoppingCart, ShoppingBag, Star, LogOut, ExternalLink, Settings } from "lucide-react";
+import { LayoutDashboard, Package, Tags, ShoppingCart, ShoppingBag, Star, ImageDown, LogOut, ExternalLink, Settings } from "lucide-react";
 import { storeConfig } from "@/config/store";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ const links = [
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
   { href: "/admin/resenas", label: "Reseñas", icon: Star },
   { href: "/admin/carritos-abandonados", label: "Carritos abandonados", icon: ShoppingBag },
+  { href: "/admin/optimizar-imagenes", label: "Optimizar fotos", icon: ImageDown },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings },
 ];
 
