@@ -27,6 +27,22 @@ export default function CheckoutPage() {
     defaultValues: { confirm: undefined as unknown as true },
   });
 
+  // Guarda los datos de contacto apenas la persona sale de cada campo, para
+  // poder identificarla si abandona el carrito sin terminar el pedido.
+  // "Best effort": si falla, no le mostramos nada al cliente ni bloqueamos
+  // el checkout.
+  function trackContactField(field: "fullName" | "phone" | "email") {
+    return (e: React.FocusEvent<HTMLInputElement>) => {
+      const value = e.target.value.trim();
+      if (!value) return;
+      fetch("/api/track-checkout-contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: getCartSessionId(), [field]: value }),
+      }).catch(() => {});
+    };
+  }
+
   async function onSubmit(values: CheckoutFormValues) {
     setSubmitting(true);
     setServerError(null);
@@ -92,6 +108,10 @@ export default function CheckoutPage() {
     "w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-accent";
   const errorClass = "mt-1 text-xs text-red-400";
 
+  const fullNameField = register("fullName");
+  const phoneField = register("phone");
+  const emailField = register("email");
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <h1 className="font-display text-3xl font-semibold">Finalizar pedido</h1>
@@ -101,17 +121,41 @@ export default function CheckoutPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">Datos de envío</h2>
 
           <div>
-            <input placeholder="Nombre completo" className={inputClass} {...register("fullName")} />
+            <input
+              placeholder="Nombre completo"
+              className={inputClass}
+              {...fullNameField}
+              onBlur={(e) => {
+                fullNameField.onBlur(e);
+                trackContactField("fullName")(e);
+              }}
+            />
             {errors.fullName && <p className={errorClass}>{errors.fullName.message}</p>}
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <input placeholder="Celular" className={inputClass} {...register("phone")} />
+              <input
+                placeholder="Celular"
+                className={inputClass}
+                {...phoneField}
+                onBlur={(e) => {
+                  phoneField.onBlur(e);
+                  trackContactField("phone")(e);
+                }}
+              />
               {errors.phone && <p className={errorClass}>{errors.phone.message}</p>}
             </div>
             <div>
-              <input placeholder="Correo electrónico" className={inputClass} {...register("email")} />
+              <input
+                placeholder="Correo electrónico"
+                className={inputClass}
+                {...emailField}
+                onBlur={(e) => {
+                  emailField.onBlur(e);
+                  trackContactField("email")(e);
+                }}
+              />
               {errors.email && <p className={errorClass}>{errors.email.message}</p>}
             </div>
           </div>
