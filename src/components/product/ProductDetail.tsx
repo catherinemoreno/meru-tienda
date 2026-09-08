@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Heart, Minus, Plus, Truck, ShieldCheck, PackageCheck, Star } from "lucide-react";
+import { Heart, Minus, Plus, Truck, ShieldCheck, PackageCheck, Star, MessageCircle } from "lucide-react";
 import { Product } from "@/types";
 import { cn, discountPercent, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart";
 import { useFavoritesStore } from "@/lib/store/favorites";
 import { useRouter } from "next/navigation";
+import { storeConfig } from "@/config/store";
 
 // Muchas descripciones se pegan como un solo párrafo largo con frases
 // separadas por puntos (típico de descripciones copiadas de proveedores).
@@ -26,6 +27,11 @@ function formatDescription(text: string): string[] {
     .split(/(?<=[.!?])\s+(?=\S)/)
     .map((l) => l.trim())
     .filter(Boolean);
+}
+
+function whatsappProductLink(name: string, price: number): string {
+  const message = "Hola, estoy interesado en " + name + ", precio " + formatPrice(price);
+  return "https://wa.me/" + storeConfig.whatsapp.number + "?text=" + encodeURIComponent(message);
 }
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -186,6 +192,12 @@ export default function ProductDetail({ product }: { product: Product }) {
             Comprar ahora
           </button>
         </div>
+
+        <p className="mt-2 text-center text-xs text-muted sm:text-left">Pago contra entrega</p>
+
+        <a href={whatsappProductLink(product.name, product.price)} target="_blank" rel="noreferrer" className="mt-3 flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.01]">
+          <MessageCircle className="h-4 w-4" /> Preguntar por WhatsApp
+        </a>
 
         <div className="mt-8 grid grid-cols-1 gap-3 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-3">
           <div className="flex items-center gap-2 text-xs text-muted">
