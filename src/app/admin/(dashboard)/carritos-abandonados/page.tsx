@@ -70,9 +70,9 @@ export default async function CarritosAbandonadosPage() {
 
               {cart.phone && (
                 
-                  href={`https://wa.me/${whatsappNumber(cart.phone)}?text=${encodeURIComponent(
+                  href={"https://wa.me/" + whatsappNumber(cart.phone) + "?text=" + encodeURIComponent(
                     "¡Hola! Vimos que dejaste unos productos en tu carrito en Meru, ¿te ayudamos a completar tu pedido? 🙂"
-                  )}`}
+                  )}
                   target="_blank"
                   rel="noreferrer"
                   className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white"
