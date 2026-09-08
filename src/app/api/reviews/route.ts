@@ -49,7 +49,38 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const productId = req.nextUrl.searchParams.get("productId");
+
+  if (productId) {
+    if (!isSupabaseAdminConfigured()) {
+      return NextResponse.json([]);
+    }
+    const db = getSupabaseAdmin();
+    const result = await db
+      .from("product_reviews")
+      .select("id, product_id, customer_name, rating, comment, photo_url, created_at")
+      .eq("product_id", productId)
+      .order("created_at", { ascending: false });
+
+    if (result.error) {
+      return NextResponse.json({ error: "No pudimos cargar las resenas" }, { status: 500 });
+    }
+
+    const rows = result.data ?? [];
+    const mapped = rows.map((r) => ({
+      id: r.id,
+      productId: r.product_id,
+      customerName: r.customer_name,
+      rating: r.rating,
+      comment: r.comment,
+      photoUrl: r.photo_url,
+      createdAt: r.created_at,
+    }));
+
+    return NextResponse.json(mapped);
+  }
+
   const session = await getAdminSession();
   if (!session) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -78,8 +109,8 @@ export async function GET() {
     products: { name: string } | { name: string }[] | null;
   };
 
-  const rows = (result.data ?? []) as Row[];
-  const mapped = rows.map((r) => {
+  const adminRows = (result.data ?? []) as Row[];
+  const adminMapped = adminRows.map((r) => {
     const productInfo = Array.isArray(r.products) ? r.products[0] : r.products;
     return {
       id: r.id,
@@ -93,7 +124,7 @@ export async function GET() {
     };
   });
 
-  return NextResponse.json(mapped);
+  return NextResponse.json(adminMapped);
 }
 
 export async function DELETE(req: NextRequest) {
