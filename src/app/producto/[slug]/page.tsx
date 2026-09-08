@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getProductBySlug, getRelatedProducts } from "@/lib/repository";
+import { getProductBySlug, getRelatedProducts, getProductReviews } from "@/lib/repository";
 import { products } from "@/lib/data/products";
 import ProductDetail from "@/components/product/ProductDetail";
+import ProductReviews from "@/components/product/ProductReviews";
 import SectionHeader from "@/components/ui/SectionHeader";
 import ProductGrid from "@/components/product/ProductGrid";
 
@@ -41,10 +42,12 @@ export default async function ProductoPage({
   if (!product) notFound();
 
   const related = await getRelatedProducts(product, 4);
+  const reviews = await getProductReviews(product.id);
 
   return (
     <div>
       <ProductDetail product={product} />
+      <ProductReviews productId={product.id} reviews={reviews} />
       {related.length > 0 && (
         <section className="mx-auto max-w-7xl px-6 pb-16">
           <SectionHeader title="También te puede interesar" />
