@@ -101,6 +101,7 @@ type ReviewRow = {
   customer_name: string;
   rating: number;
   comment: string | null;
+  photo_url: string | null;
   created_at: string;
 };
 
@@ -111,6 +112,7 @@ function rowToReview(row: ReviewRow): Review {
     customerName: row.customer_name,
     rating: row.rating,
     comment: row.comment,
+    photoUrl: row.photo_url,
     createdAt: row.created_at,
   };
 }
@@ -316,7 +318,7 @@ export async function getProductReviews(productId: string): Promise<Review[]> {
   if (isSupabaseConfigured()) {
     const { data, error } = await supabase!
       .from("product_reviews")
-      .select("id, product_id, customer_name, rating, comment, created_at")
+      .select("id, product_id, customer_name, rating, comment, photo_url, created_at")
       .eq("product_id", productId)
       .order("created_at", { ascending: false });
     if (error) throw error;
