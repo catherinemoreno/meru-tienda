@@ -8,6 +8,20 @@ import { cn, discountPercent, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart";
 import { useFavoritesStore } from "@/lib/store/favorites";
 import { useRouter } from "next/navigation";
+import { storeConfig } from "@/config/store";
+
+function whatsappProductLink(name: string, price: number): string {
+  const message = "Hola, estoy interesado en " + name + ", precio " + formatPrice(price);
+  return "https://wa.me/" + storeConfig.whatsapp.number + "?text=" + encodeURIComponent(message);
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 32 32" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+      <path d="M16.001 3C9.101 3 3.5 8.601 3.5 15.5c0 2.31.632 4.474 1.732 6.328L3 29l7.35-2.187A12.44 12.44 0 0 0 16.001 28C22.9 28 28.5 22.399 28.5 15.5S22.9 3 16.001 3zm0 22.7a10.15 10.15 0 0 1-5.19-1.42l-.372-.22-3.87 1.152 1.176-3.77-.243-.388A10.13 10.13 0 0 1 5.8 15.5c0-5.633 4.567-10.2 10.2-10.2 5.633 0 10.2 4.567 10.2 10.2s-4.567 10.2-10.2 10.2zm5.593-7.646c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.79.995-.968 1.199-.178.204-.357.23-.663.077-.306-.153-1.292-.476-2.462-1.518-.91-.812-1.524-1.814-1.703-2.12-.178-.306-.019-.472.134-.624.138-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.05-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.515-.688-.524l-.586-.01c-.204 0-.535.077-.815.383-.28.306-1.07 1.045-1.07 2.55 0 1.505 1.096 2.96 1.248 3.164.153.204 2.157 3.294 5.227 4.62.73.315 1.3.503 1.744.644.733.233 1.4.2 1.927.121.588-.088 1.81-.74 2.065-1.454.255-.714.255-1.326.179-1.454-.077-.128-.28-.204-.586-.357z" />
+    </svg>
+  );
+}
 
 // Muchas descripciones se pegan como un solo párrafo largo con frases
 // separadas por puntos (típico de descripciones copiadas de proveedores).
@@ -187,6 +201,17 @@ export default function ProductDetail({ product }: { product: Product }) {
             Comprar ahora
           </button>
         </div>
+
+        <p className="mt-3 text-xs text-muted">Pago contra entrega</p>
+
+        
+          href={whatsappProductLink(product.name, product.price)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex items-center justify-center gap-2 rounded-full border border-[#25D366]/40 bg-[#25D366]/10 px-6 py-3.5 text-sm font-semibold text-[#25D366] transition-colors hover:bg-[#25D366]/20"
+        >
+          <WhatsAppIcon /> Preguntar por WhatsApp
+        </a>
 
         <div className="mt-8 grid grid-cols-1 gap-3 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-3">
           <div className="flex items-center gap-2 text-xs text-muted">
