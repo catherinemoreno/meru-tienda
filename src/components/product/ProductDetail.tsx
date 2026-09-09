@@ -204,8 +204,7 @@ export default function ProductDetail({ product }: { product: Product }) {
 
         <p className="mt-3 text-xs text-muted">Pago contra entrega</p>
 
-        
-          href={whatsappProductLink(product.name, product.price)}
+        <a href={whatsappProductLink(product.name, product.price)}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-3 flex items-center justify-center gap-2 rounded-full border border-[#25D366]/40 bg-[#25D366]/10 px-6 py-3.5 text-sm font-semibold text-[#25D366] transition-colors hover:bg-[#25D366]/20"
