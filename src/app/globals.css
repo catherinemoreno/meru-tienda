@@ -7,9 +7,11 @@
   --border: #2a2a2f;
   --foreground: #f2f0eb;
   --muted: #a6a3a0;
-  --accent: #d9a857;
-  --accent-soft: #ebc98a;
-  --accent-dark: #b8863a;
+  --accent: #c6ff3d;
+  --accent-soft: #e2ff9e;
+  --accent-dark: #9fe000;
+  --accent-purple: #8b5cf6;
+  --accent-purple-soft: #a78bfa;
 }
 
 @theme inline {
@@ -22,6 +24,8 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-accent-dark: var(--accent-dark);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-purple-soft: var(--accent-purple-soft);
   --font-sans: var(--font-manrope);
   --font-display: var(--font-space-grotesk);
 }
