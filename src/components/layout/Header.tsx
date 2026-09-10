@@ -26,7 +26,7 @@ export default function Header({ categories }: { categories: Category[] }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 glass border-b border-border">
+      <header className="sticky top-0 z-40 border-b border-border bg-surface">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <button
             className="lg:hidden"
