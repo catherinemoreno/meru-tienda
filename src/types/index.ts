@@ -5,7 +5,8 @@ export type CategorySlug =
   | "decoracion"
   | "bienestar"
   | "tecnologia"
-  | "hallazgos";
+  | "hallazgos"
+  | "juguetes";
 
 export interface Category {
   slug: CategorySlug;
@@ -95,15 +96,4 @@ export interface CartItem {
   quantity: number;
   variant?: string;
   stock: number;
-}
-
-export interface Review {
-  id: string;
-  productId: string;
-  productName?: string;
-  customerName: string;
-  rating: number;
-  comment: string | null;
-  photoUrl: string | null;
-  createdAt: string;
 }
